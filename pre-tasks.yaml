@@ -1,0 +1,64 @@
+---
+- name: do stuff
+  hosts: all
+  vars_files:
+    - vars.yml
+  remote_user: "{{ ansible_user }}"
+
+  tasks:
+  - name: apt-add universe
+    become: true
+    ansible.builtin.shell: apt-add-repository universe
+
+  - name: Upgrade all apt packages
+    become: true
+    apt: upgrade=dist force_apt_get=yes
+
+  - name: Install the package "bash_completion"
+    become: true
+    apt:
+      name: bash-completion
+      state: present
+
+  - name: Install the package "command not found"
+    become: true
+    apt:
+      name: command-not-found
+      state: present
+
+  - name: Install the package "mpi-default-dev"
+    become: true
+    apt:
+      name: mpi-default-dev
+      state: present
+
+  - name: Install the package "nfs-server"
+    when: inventory_hostname in groups['servers']
+    become: true
+    apt:
+      name: nfs-kernel-server
+      state: present
+
+  - name: Install the package "nfs-common"
+    when: inventory_hostname in groups['clients']
+    become: true
+    apt:
+      name: nfs-common
+      state: present
+
+  - name: Install the package "rpcbind"
+    become: true
+    apt:
+      name: rpcbind
+      state: present
+
+  - name: make scratch directory
+    become: true
+    file:
+      path: /scratch
+      state: directory
+
+  - name: mount /scratch
+    when: inventory_hostname in groups['clients']
+    become: true
+    ansible.builtin.shell: sudo mount -t nfs 10.10.1.1:/scratch /scratch

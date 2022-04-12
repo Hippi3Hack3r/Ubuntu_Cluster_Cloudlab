@@ -1,0 +1,12 @@
+---
+- name: restart slurm
+  become: true
+  service:
+    name: slurmd
+    state: reloaded
+
+- name: restart slurmd
+  become: true
+  service:
+    name: slurmctld
+    state: reloaded

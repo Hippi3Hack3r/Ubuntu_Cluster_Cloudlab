@@ -1,0 +1,42 @@
+ansible_user: CHANGEME
+server_internal_ip: 10.10.1.1
+
+#
+# NFS configuration variabls below
+#
+nfs_rdma_enabled: true
+mountpoint: /users
+nfs_exports:
+    - path: /users
+      options: "rw,no_root_squash"
+
+nfs_mounts:
+    - path: /users
+      mountpoint: /users
+      server: servers
+      options: "defaults,vers=3"
+
+nfs_allowed_groups:
+    - cluster
+
+#
+# SLURM configuration variabls below
+#
+slurmctld_hostname: node0
+slurmdbd_host: node0
+slurmdbd_enabled: false
+
+slurm_compute_group: clients
+slurm_cluster_name: cluster
+slurm_partition_name: debug
+slurm_cpus_per_node: 2
+slurm_state_dir: /var/lib/slurm
+slurm_acct_file: /var/log/slurm_jobacct.log
+
+
+#
+# Other optional packages
+#
+new_tcpdump: false
+# only install mft if the nodes have mellanox nics
+mellanox_debug_tools_enabled: true

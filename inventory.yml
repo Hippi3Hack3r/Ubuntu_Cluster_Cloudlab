@@ -1,0 +1,9 @@
+[servers]
+CHANGEME.utah.cloudlab.us
+
+[clients]
+CHANGEME.utah.cloudlab.us
+
+[cluster:children]
+servers
+clients

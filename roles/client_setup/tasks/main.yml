@@ -1,0 +1,32 @@
+---
+- name: run modprobe xprtrdma
+  become: true
+  ansible.builtin.shell: modprobe xprtrdma
+  when: nfs_rdma_enabled
+
+- name: install nfs packages
+  apt: name={{item}} state=present
+  with_items:
+  - nfs-common
+  - nfs4-acl-tools
+
+#- name: ensure nfs is running
+#  service: name=nfs-common state=started enabled=yes
+#- name: ensure mountpoints exist
+#  file: path={{item.mountpoint}} state=directory
+#  with_items:
+#  - nfs_mounts
+
+- name: mount "{{ mountpoint}}"
+  become: true
+  ansible.builtin.shell: sudo mount -t nfs -o rdma,port=20049 "{{ server_internal_ip }}":"{{ mountpoint}}" "{{ mountpoint}}"
+  when: nfs_rdma_enabled
+
+- name: mount "{{ mountpoint}}"
+  become: true
+  ansible.builtin.shell: sudo mount -t nfs "{{ server_internal_ip }}":"{{ mountpoint}}" "{{ mountpoint}}"
+  when: nfs_rdma_enabled == false
+
+- name: ensure filesystems are mounted
+  mount: name=/users src="{{item.server}}:users" fstype=nfs state=mounted
+  with_items: nfs_mounts

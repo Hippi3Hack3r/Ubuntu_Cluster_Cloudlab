@@ -1,0 +1,44 @@
+---
+- name: apt-add universe
+  become: true
+  ansible.builtin.shell: apt-add-repository universe
+
+- name: Upgrade all apt packages
+  become: true
+  apt: update_cache=yes upgrade=dist force_apt_get=yes
+
+- name: Install the package "bash_completion"
+  become: true
+  apt:
+    name: bash-completion
+    state: present
+
+- name: Install the package "command not found"
+  become: true
+  apt:
+    name: command-not-found
+    state: present
+
+- name: Install the package rdma-core
+  become: true
+  apt:
+    name: rdma-core
+    state: present
+
+- name: Install the package librdmacm-dev
+  become: true
+  apt:
+    name: librdmacm-dev
+    state: present
+
+- name: install OpenMPI packages
+  apt: name={{ item }} state=present
+  with_items:
+  - libopenmpi-dev  # consider also installing mpi4py and boost
+  - mpi-default-dev
+
+- name: Install mpich
+  become: true
+  apt:
+    name: mpich
+    state: present

@@ -1,0 +1,12 @@
+- name: Install slurm
+  become: true
+  apt:
+    name: slurm-wlm # this installs slurmctld and slurmd so maybe it should be split up instead...
+    state: present
+
+- name: upload slurm configuration file
+  become: true
+  template: src=slurm.conf.j2 dest=/etc/slurm-llnl/slurm.conf owner=root mode=0644
+  #notify:
+#    - restart slurm
+#    - restart slurmd

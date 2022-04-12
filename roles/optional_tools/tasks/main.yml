@@ -1,0 +1,47 @@
+---
+- name: download and unarchive libpcap
+  become: true
+  ansible.builtin.unarchive:
+    src: https://www.tcpdump.org/release/libpcap-1.10.1.tar.gz
+    dest: /opt/
+    remote_src: yes
+  when: new_tcpdump
+
+- name: install libpcap
+  become: true
+  ansible.builtin.shell: ./configure; make; make install
+  args:
+    chdir: /opt/libpcap-1.10.1
+  when: new_tcpdump
+
+- name: download and unarchive tcpdump
+  become: true
+  ansible.builtin.unarchive:
+    src: https://www.tcpdump.org/release/tcpdump-4.99.1.tar.gz
+    dest: /opt/
+    remote_src: yes
+  when: new_tcpdump
+
+- name: install tcpdump
+  become: true
+  ansible.builtin.shell: ./configure; make; make install
+  args:
+    chdir: /opt/tcpdump-4.99.1
+  when: new_tcpdump
+
+# End Libpcap/tcpdump
+
+- name: download and unarchive MFT
+  become: true
+  ansible.builtin.unarchive:
+    src: https://www.mellanox.com/downloads/MFT/mft-4.18.0-106-x86_64-deb.tgz
+    dest: /opt/
+    remote_src: yes
+  when: mellanox_debug_tools_enabled
+
+- name: install MFT
+  become: true
+  ansible.builtin.shell: ./install.sh
+  args:
+    chdir: /opt/mft-4.18.0-106-x86_64-deb
+  when: mellanox_debug_tools_enabled

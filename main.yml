@@ -1,11 +1,11 @@
 ---
 - hosts: servers:clients
-  become: true
+  #become: true
   vars_files:
   - vars.yml
   roles:
   - "universal_config"
-  #- "optional_tools"
+  - "optional_tools"
   - "ganglia_gmond"  # compute node monitoring software. In progress
   - "slurm"
 

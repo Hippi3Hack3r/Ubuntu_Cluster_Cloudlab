@@ -35,10 +35,29 @@
   apt: name={{ item }} state=present
   with_items:
   - libopenmpi-dev  # consider also installing mpi4py and boost
-  - mpi-default-dev
+  - openmpi-bin
+  - openmpi-common
+  - libgtk2.0-dev
 
 - name: Install mpich
   become: true
   apt:
     name: mpich
     state: present
+
+#- name: Install libpmi
+#  become: true
+#  apt:
+#    name: name={{ item }} state=present
+#    state: present
+#  with_items:
+#    - libpmi-pmix-dev
+    #- libpmi2-0-dev
+
+- name: Generate ssh key to communicate to other machines for mpi
+  community.crypto.openssh_keypair:
+    path: "{{ ansible_env.HOME }}/.ssh/id_rsa"
+    type: rsa
+
+- name: copy key to authorized_keys
+  ansible.builtin.shell: cat "{{ ansible_env.HOME }}/.ssh/id_rsa.pub" >> "{{ ansible_env.HOME }}/.ssh/authorized_keys"

@@ -3,10 +3,11 @@ This program is designed to install the necessary packages and configurations
 to create a simple HPC cluster on a cloudlab expirement.
 
 What it does:
-* updates all the operating filesystems
-* installs slurm, openmpi, mpich
+* updates all packages
+* installs slurm, openmpi, mpich, libmpi, rdma-core, rdmacm-dev
 * installs NFS and mounts the /users directory (you can change this)
-* installs the latest version of tcpdump and libpcap
+* optionally installs the latest version of tcpdump and libpcap
+* optionally installs and configures libfabric and Sandia OpenSHMEM
 ### How to use
 1. Clone this repository onto your local machine.
 1. If you do not have ansible installed run runme.sh first.
@@ -29,3 +30,7 @@ Some optional development tools are included:
 
 ## TODO's
 need to fix the nfs stuff for fs/nfsd/portlist to clobber the file and reupload instead of just adding entries.
+
+Make it so the local interface doesn't need to be hardcoded in slurm.conf and nfs exports
+## Aknowladgements
+Development financially supported by University of Utah ANSR lab

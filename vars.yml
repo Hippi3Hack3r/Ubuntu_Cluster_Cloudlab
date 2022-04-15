@@ -1,6 +1,6 @@
-ansible_user: CHANGEME
+ansible_user: HannnahC
 server_internal_ip: 10.10.1.1
-
+local_network_interface: ansible_ens1f0
 #
 # NFS configuration variabls below
 #
@@ -32,11 +32,15 @@ slurm_partition_name: debug
 slurm_cpus_per_node: 2
 slurm_state_dir: /var/lib/slurm
 slurm_acct_file: /var/log/slurm_jobacct.log
-
+slurm_user: root
 
 #
 # Other optional packages
 #
-new_tcpdump: false
+new_tcpdump: true
 # only install mft if the nodes have mellanox nics
 mellanox_debug_tools_enabled: true
+
+libfabric: true
+
+Sandia_OpenSHMEM: true

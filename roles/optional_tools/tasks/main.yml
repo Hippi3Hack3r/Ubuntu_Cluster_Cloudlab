@@ -45,3 +45,43 @@
   args:
     chdir: /opt/mft-4.18.0-106-x86_64-deb
   when: mellanox_debug_tools_enabled
+
+  # End Mellanox Firmware tools
+- name: download and unarchive libfabric
+  become: true
+  ansible.builtin.unarchive:
+    src: https://github.com/ofiwg/libfabric/archive/refs/tags/v1.14.0.tar.gz
+    dest: /opt/
+    remote_src: yes
+  when: libfabric
+
+- name: install libfabric
+  become: true
+  ansible.builtin.shell: ./autogen.sh; ./configure --prefix=/opt/libfabric; make; make install
+  args:
+    chdir: /opt/libfabric-1.14.0
+  when: libfabric
+
+  # End libfabric
+
+  # Install Sandia Openshmem1.5
+
+- name: download and unarchive SOS
+  ansible.builtin.unarchive:
+    src: https://github.com/Sandia-OpenSHMEM/SOS/archive/refs/tags/v1.5.0.tar.gz
+    dest: "{{ ansible_env.HOME }}"
+    remote_src: yes
+  when: Sandia_OpenSHMEM
+
+- name: install SOS
+  ansible.builtin.shell: ./autogen.sh; ./configure --prefix=/opt --enable-pmi-simple --with-ofi=/opt/libfabric; make
+  args:
+    chdir: "{{ ansible_env.HOME }}/SOS-1.5.0"
+  when: Sandia_OpenSHMEM
+
+- name: install SOS
+  become: true
+  ansible.builtin.shell: make install
+  args:
+    chdir: "/users/{{ ansible_user }}/SOS-1.5.0"
+  when: Sandia_OpenSHMEM

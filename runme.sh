@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if ! command -v ansible &> /dev/null ; then
     install_ansible
 fi

@@ -32,5 +32,5 @@ Some optional development tools are included:
 need to fix the nfs stuff for fs/nfsd/portlist to clobber the file and reupload instead of just adding entries.
 
 Make it so the local interface doesn't need to be hardcoded in slurm.conf and nfs exports
-## Aknowladgements
+## Acknowledgements
 Development financially supported by University of Utah ANSR lab

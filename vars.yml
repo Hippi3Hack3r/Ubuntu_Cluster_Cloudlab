@@ -4,7 +4,7 @@ local_network_interface: ansible_ens1f0
 #
 # NFS configuration variabls below
 #
-nfs_rdma_enabled: true
+nfs_rdma_enabled: false
 mountpoint: /users
 nfs_exports:
     - path: /users
@@ -37,10 +37,10 @@ slurm_user: root
 #
 # Other optional packages
 #
-new_tcpdump: true
+new_tcpdump: false
 # only install mft if the nodes have mellanox nics
-mellanox_debug_tools_enabled: true
+mellanox_debug_tools_enabled: false
 
-libfabric: true
+libfabric: false
 
-Sandia_OpenSHMEM: true
+Sandia_OpenSHMEM: false

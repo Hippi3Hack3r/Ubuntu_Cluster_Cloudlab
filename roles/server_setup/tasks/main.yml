@@ -6,6 +6,7 @@
   - nfs4-acl-tools
 
 - name: configure exports
+  become: true
   template: src=exports dest=/etc/exports
   notify:
   - exportfs

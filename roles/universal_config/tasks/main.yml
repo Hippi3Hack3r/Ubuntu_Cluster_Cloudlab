@@ -32,6 +32,7 @@
     state: present
 
 - name: install OpenMPI packages
+  become: true
   apt: name={{ item }} state=present
   with_items:
   - libopenmpi-dev  # consider also installing mpi4py and boost

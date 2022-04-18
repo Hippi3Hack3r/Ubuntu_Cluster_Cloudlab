@@ -155,7 +155,7 @@ SlurmdLogFile=/var/log/slurmd.log
 #
 # COMPUTE NODES
 {% for cn in groups[slurm_compute_group] %}
-NodeName={{hostvars[cn]['ansible_hostname']}} NodeAddr={{hostvars[cn]['ansible_ens1f0']['ipv4']['address']}} CPUs={{slurm_cpus_per_node}} State=UNKNOWN
+NodeName={{hostvars[cn]['ansible_hostname']}} NodeAddr={{hostvars[cn]['ansible_ens1f1']['ipv4']['address']}} CPUs={{slurm_cpus_per_node}} State=UNKNOWN
 {% endfor %}
 
 PartitionName={{slurm_partition_name}} Nodes={% for cn in groups[slurm_compute_group] -%}{{hostvars[cn]['ansible_hostname']}}{% if not loop.last -%}

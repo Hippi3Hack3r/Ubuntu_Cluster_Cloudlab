@@ -1,10 +1,10 @@
 [servers]
-amd222.utah.cloudlab.us
+CHANGEME.cloudlab.us
 
 [clients]
-amd220.utah.cloudlab.us
-amd207.utah.cloudlab.us
-amd208.utah.cloudlab.us
+CHANGEME.cloudlab.us
+CHANGEME.cloudlab.us
+CHANGEME.cloudlab.us
 
 [cluster:children]
 servers

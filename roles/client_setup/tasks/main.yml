@@ -5,6 +5,7 @@
   when: nfs_rdma_enabled
 
 - name: install nfs packages
+  become: true
   apt: name={{item}} state=present
   with_items:
   - nfs-common
@@ -15,9 +16,9 @@
   ansible.builtin.shell: sudo mount -t nfs -o rdma,port=20049 "{{ server_internal_ip }}":"{{ mountpoint}}" "{{ mountpoint}}"
   when: nfs_rdma_enabled
 
-- name: mount "{{ mountpoint}}"
+- name: mount "{{ mountpoint }}"
   become: true
-  ansible.builtin.shell: sudo mount -t nfs "{{ server_internal_ip }}":"{{ mountpoint}}" "{{ mountpoint}}"
+  ansible.builtin.shell: mount -t nfs "{{ server_internal_ip }}":"{{ mountpoint }}" "{{ mountpoint }}"
   when: nfs_rdma_enabled == false
 
 #- name: ensure filesystems are mounted

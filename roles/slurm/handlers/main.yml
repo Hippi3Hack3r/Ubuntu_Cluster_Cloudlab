@@ -1,12 +1,14 @@
 ---
-- name: restart slurm
+- name: restart slurmd
   become: true
   service:
     name: slurmd
     state: reloaded
+  when: inventory_hostname in groups['computes']
 
-- name: restart slurmd
+- name: restart slurmctld
   become: true
   service:
     name: slurmctld
     state: reloaded
+  when: inventory_hostname in groups['headnode']

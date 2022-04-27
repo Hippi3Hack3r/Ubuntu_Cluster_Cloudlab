@@ -1,4 +1,9 @@
 ---
+- name: Make '{{ default_shell }}' the default shell
+  become: true
+  ansible.builtin.shell: usermod -s {{ default_shell }} {{ ansible_user }}
+
+
 - name: apt-add universe
   become: true
   ansible.builtin.shell: apt-add-repository universe
@@ -40,25 +45,30 @@
   - openmpi-common
   - libgtk2.0-dev
 
-- name: Install mpich
+- name: download and unarchive openmpi
   become: true
-  apt:
-    name: mpich
-    state: present
+  ansible.builtin.unarchive:
+    src: 'https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-{{ ompi_version }}.tar.gz'
+    dest: /opt
+    remote_src: yes
 
-#- name: Install libpmi
-#  become: true
-#  apt:
-#    name: name={{ item }} state=present
-#    state: present
-#  with_items:
-#    - libpmi-pmix-dev
-    #- libpmi2-0-dev
+- name: install openmpi
+  become: true
+  ansible.builtin.shell: ./configure --prefix='/opt/openMPI/{{ ompi_version }}' --enable-orterun-prefix-by-default; make -j 16; make install -j 16
+  args:
+    chdir: /opt/openmpi-{{ ompi_version }}
 
 - name: Generate ssh key to communicate to other machines for mpi
   community.crypto.openssh_keypair:
-    path: "{{ ansible_env.HOME }}/.ssh/id_rsa"
+    path: '{{ ansible_env.HOME }}/.ssh/id_rsa'
     type: rsa
 
 - name: copy key to authorized_keys
-  ansible.builtin.shell: cat "{{ ansible_env.HOME }}/.ssh/id_rsa.pub" >> "{{ ansible_env.HOME }}/.ssh/authorized_keys"
+  ansible.builtin.shell: cat '{{ ansible_env.HOME }}/.ssh/id_rsa.pub' >> '{{ ansible_env.HOME }}/.ssh/authorized_keys'
+
+- name: create /opt/hpctools
+  become: true
+  ansible.builtin.file:
+    path: /opt/hpctools
+    state: directory
+    mode: '0755'

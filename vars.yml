@@ -1,46 +1,107 @@
-ansible_user: HannnahC
+# -----------------------------------------------------------------------------
+# configurables
+# -----------------------------------------------------------------------------
+ansible_user: HannnahC  # this should be the same as your non-root username
 server_internal_ip: 10.10.1.1
-local_network_interface: ansible_ens1f0
-#
-# NFS configuration variabls below
-#
-nfs_rdma_enabled: false
+default_shell: /bin/bash  # /usr/bin/tcsh default on cloudlab
+
+# nfs options
 mountpoint: /users
+nfs_rdma_enabled: false
+
+# SLURM configuration variabls below
+slurmctld_hostname: node0
+slurm_partition_name: debug
+slurm_cpus_per_node: 4
+slurm_user: root
+
+# -----------------------------------------------------------------------------
+# Optional Tools (Set to true/false)
+# -----------------------------------------------------------------------------
+new_tcpdump: true
+
+# only install mft if the nodes have mellanox NICs
+mellanox_debug_tools_enabled: true
+
+libfabric: true
+
+Sandia_OpenSHMEM: true
+
+
+# -----------------------------------------------------------------------------
+# items you should not need to edit
+# -----------------------------------------------------------------------------
+# OpenMPI
+ompi_version: 4.1.3
+
+#slurm
+slurmdbd_host: node0
+slurmdbd_enabled: false # no option for slurmdb currently, so leave this alone
+slurm_compute_group: computes
+slurm_cluster_name: cluster
+slurm_state_dir: /var/lib/slurm
+slurm_acct_file: /var/log/slurm_jobacct.log
+
+# nfs related
 nfs_exports:
-    - path: /users
+    - path: '{{ mountpoint }}'
       options: "rw,no_root_squash"
 
 nfs_mounts:
-    - path: /users
-      mountpoint: /users
+    - path: '{{ mountpoint }}'
+      mountpoint: '{{ mountpoint }}'
       server: servers
       options: "defaults,vers=3"
 
 nfs_allowed_groups:
     - cluster
 
-#
-# SLURM configuration variabls below
-#
-slurmctld_hostname: node0
-slurmdbd_host: node0
-slurmdbd_enabled: false
+# lmod related
+lmod_version: '7.7.32'
 
-slurm_compute_group: clients
-slurm_cluster_name: cluster
-slurm_partition_name: debug
-slurm_cpus_per_node: 2
-slurm_state_dir: /var/lib/slurm
-slurm_acct_file: /var/log/slurm_jobacct.log
-slurm_user: root
+lmod_install: no
 
-#
-# Other optional packages
-#
-new_tcpdump: false
-# only install mft if the nodes have mellanox nics
-mellanox_debug_tools_enabled: false
+lmod_prefix: '/opt/hpctools'
 
-libfabric: false
+lmod_module_root_path: '{{ lmod_prefix }}/modulefiles'
 
-Sandia_OpenSHMEM: false
+lmod_lua_interpreter: /usr/bin/lua5.3
+lmod_luac_interpreter: /usr/bin/luac5.3
+
+lmod_base_dir: '{{ lmod_prefix }}/lmod'
+
+lmod_install_dir: '{{ lmod_base_dir }}/{{ lmod_version }}'
+
+lmod_install_link: '{{ lmod_base_dir }}/lmod'
+
+lmod_source_path: '/tmp/Lmod-{{ lmod_version }}'
+
+
+# shell configuration
+lmod_init_bash_path: '/etc/profile.d/{{ lmod_init_bash_file }}'
+
+lmod_init_bash_source: '{{ lmod_install_link }}/init/profile'
+
+lmod_init_csh_path: '/etc/profile.d/{{ lmod_init_csh_file }}'
+
+lmod_init_csh_source: '{{ lmod_install_link }}/init/cshrc'
+
+lmod_init_bash_file: 'z00-lmod.sh'
+lmod_init_csh_file: 'z00-lmod.csh'
+
+#lmod_module_paths:
+#  - '{{ lmod_prefix }}/modulefiles/compiler'
+#  - '{{ lmod_prefix }}/modulefiles/libraries'
+#  - '{{ lmod_prefix }}/modulefiles/tools'
+#  - '{{ lmod_prefix }}/lmod/lmod/modules/Core'
+
+lmod_spider_cache_dir: '{{ lmod_module_root_path }}/.spider-cache'
+
+lmod_spider_cache_stamp_file: '{{ lmod_module_root_path }}/.spider-cache.stamp'
+
+lmod_spider_cache_cron: no
+
+lmod_spider_cache_cron_minute: '0'
+
+lmod_spider_cache_cron_modulepath:
+  - '$MODULEPATH'

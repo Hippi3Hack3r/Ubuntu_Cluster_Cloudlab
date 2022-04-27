@@ -1,16 +1,15 @@
 ---
-- hosts: servers:clients
-  #become: true
+- hosts: headnode:computes
   vars_files:
   - vars.yml
   roles:
   - "universal_config"
   - "optional_tools"
-  - "ganglia_gmond"  # compute node monitoring software. In progress
+  - "lmod"
   - "slurm"
 
 # Run roles specific to the cluster headnode
-- hosts: servers
+- hosts: headnode
   become: true
   vars_files:
   - vars.yml
@@ -18,7 +17,7 @@
   - "server_setup"
 
 # Run roles specific to the cluster compute nodes
-- hosts: clients
+- hosts: computes
   become: true
   vars_files:
   - vars.yml

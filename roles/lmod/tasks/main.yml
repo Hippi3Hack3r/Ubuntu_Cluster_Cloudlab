@@ -1,0 +1,108 @@
+---
+- name: install lmod dependencies
+  become: true
+  apt: name={{ item }} state=present
+  with_items:
+    - lua5.3
+    - lua-bit32
+    - lua-posix
+    - lua-posix-dev
+    - liblua5.3-0
+    - liblua5.3-dev
+    - tcl
+    - tcl-dev
+    - tcl8.6
+    - tcl8.6-dev
+    - libtcl8.6
+
+# https://github.com/TACC/Lmod/commit/1d15717144f595b9a09e8421aa00b5dead3ed21d
+- name: fix lua-posix on Ubuntu
+  become: true
+  file:
+    src: /usr/lib/x86_64-linux-gnu/liblua5.3-posix.so
+    dest: /usr/lib/x86_64-linux-gnu/lua/5.3/posix.so
+    state: link
+
+
+- name: download and unarchive lmod
+  become: true
+  ansible.builtin.unarchive:
+    src: 'https://github.com/TACC/Lmod/archive/{{ lmod_version }}.tar.gz'
+    dest: '/tmp'
+    remote_src: yes
+    creates: '{{ lmod_source_path }}'
+
+- name: configure and install lmod from source
+  become: true
+  shell: >
+    ./configure
+    --prefix={{ lmod_prefix }}
+    --with-module-root-path={{ lmod_module_root_path }}
+    --with-spiderCacheDir={{ lmod_spider_cache_dir }}
+    --with-updateSystemFn={{ lmod_spider_cache_stamp_file }}
+    --with-lua={{ lmod_lua_interpreter }}
+    --with-luac={{ lmod_luac_interpreter }}
+    &&
+    make install
+  args:
+    chdir: '{{ lmod_source_path }}'
+    creates: '{{ lmod_install_dir }}'
+
+- name: delete lmod sources
+  become: true
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - '{{ lmod_source_path }}'
+    - '/tmp/lmod-{{ lmod_version }}.tar.gz'
+
+- name: install update spider cache cron job
+  become: true
+  cron:
+    name: update lmod spider cache
+    minute: '{{ lmod_spider_cache_cron_minute }}'
+    user: 'root'
+    job: >
+      source {{ lmod_init_bash_source }}
+      &&
+      {{ lmod_install_link }}/libexec/update_lmod_system_cache_files
+      {{ lmod_spider_cache_cron_modulepath | join(':') }}
+    cron_file: 'lmod'
+  tags:
+    - cron
+    - lmod-
+
+- name: create shell configuration symlinks
+  become: true
+  file:
+    src: '{{ lmod_install_link }}/init/{{ item.src }}'
+    dest: '{{ item.dest }}'
+    owner: root
+    group: root
+    state: link
+    force: yes
+  with_items:
+    - src: 'profile'
+      dest: '{{ lmod_init_bash_path }}'
+    - src: 'cshrc'
+      dest: '{{ lmod_init_csh_path }}'
+
+- name: create module for openMPI
+  become: true
+  template: src=openMPI.lua.j2 dest=/opt/hpctools/lmod/lmod/modulefiles/Core/openMPI.lua
+
+- name: create module for openSHMEM
+  become: true
+  template: src=openSHMEM.lua.j2 dest=/opt/hpctools/lmod/lmod/modulefiles/Core/openSHMEM.lua
+  when: Sandia_OpenSHMEM
+
+- name: module path file
+  become: true
+  template:
+    src: 'modulespath.j2'
+    dest: '{{ lmod_install_dir }}/init/.modulespath'
+    owner: root
+    group: root
+    mode: 0644
+  when: lmod_module_paths is defined

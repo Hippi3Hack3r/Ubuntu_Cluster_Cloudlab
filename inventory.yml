@@ -1,11 +1,10 @@
-[servers]
+[headnode]
 CHANGEME.cloudlab.us
 
-[clients]
-CHANGEME.cloudlab.us
+[computes]
 CHANGEME.cloudlab.us
 CHANGEME.cloudlab.us
 
 [cluster:children]
-servers
-clients
+headnode
+computes

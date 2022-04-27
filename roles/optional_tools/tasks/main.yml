@@ -74,7 +74,7 @@
   when: Sandia_OpenSHMEM
 
 - name: install SOS
-  ansible.builtin.shell: ./autogen.sh; ./configure --prefix=/opt --enable-pmi-simple --with-ofi=/opt/libfabric; make
+  ansible.builtin.shell: ./autogen.sh; ./configure --prefix=/opt/SOS/1.5.0 --enable-pmi-simple --with-ofi=/opt/libfabric; make
   args:
     chdir: "{{ ansible_env.HOME }}/SOS-1.5.0"
   when: Sandia_OpenSHMEM

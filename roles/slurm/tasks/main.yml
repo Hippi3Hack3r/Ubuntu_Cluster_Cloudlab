@@ -7,6 +7,6 @@
 - name: upload slurm configuration file
   become: true
   template: src=slurm.conf.j2 dest=/etc/slurm-llnl/slurm.conf owner=root mode=0644
-  #notify:
-#    - restart slurm
-#    - restart slurmd
+  notify:
+    - restart slurmctld
+    - restart slurmd

@@ -14,3 +14,5 @@ install_ansible() {
     echo "unrecognized os. Exiting"
   fi
 }
+
+ansible-playbook main.yml
